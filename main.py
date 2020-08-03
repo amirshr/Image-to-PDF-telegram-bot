@@ -43,8 +43,10 @@ def get_convert_and_delete_keyboard():
 @dp.message_handler(content_types=ContentType.PHOTO)
 async def get_user_images(message: types.Message):
     user_id = str(message.chat.id)
+
     try:
-        os.mkdir(dir_path + '/UserData/' + user_id)
+        os.makedirs(dir_path + '/UserData/' + user_id)
+
     except FileExistsError:
         pass
     except Exception as e:
