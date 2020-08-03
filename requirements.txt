@@ -1,0 +1,8 @@
+psycopg2-binary
+python-dotenv
+pyrogram
+aiogram
+apscheduler
+fpdf
+pillow
+dropbox
