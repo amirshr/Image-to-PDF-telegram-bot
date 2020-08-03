@@ -36,22 +36,18 @@ def get_convert_and_delete_keyboard():
         ('Remove added images', 'Remove added images'))
     row_btns = (types.InlineKeyboardButton(text, callback_data=data) for text, data in text_and_data)
     images_keyboard_markup.add(*row_btns)
-
     return images_keyboard_markup
 
 
 @dp.message_handler(content_types=ContentType.PHOTO)
 async def get_user_images(message: types.Message):
     user_id = str(message.chat.id)
-
     try:
         os.makedirs(dir_path + '/UserData/' + user_id)
-
-    except FileExistsError:
-        pass
     except Exception as e:
         print(e)
         pass
+
     destination = (dir_path + '/UserData/' + user_id + '/' + message.photo[2].file_unique_id + '.jpg')
     if await bot.download_file_by_id(message.photo[2].file_id, destination):
 
@@ -98,11 +94,12 @@ async def delete_images(query: types.CallbackQuery):
     await query.answer('Added images removed.')
     delete_user_data(user_id)
 
-    await bot.send_message(query.message.chat.id, 'Your added images have been deleted! \n\nnow you can send images again.')
+    await bot.send_message(query.message.chat.id, 'Your added images have been deleted!'
+                                                  ' \n\nnow you can send images again.')
 
 
 if __name__ == '__main__':
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(upload_database, "interval", seconds=600)
+    scheduler.add_job(upload_database, "interval", seconds=1200)
     scheduler.start()
     executor.start_polling(dp, skip_updates=True)
