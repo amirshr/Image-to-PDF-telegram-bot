@@ -44,8 +44,11 @@ def get_convert_and_delete_keyboard():
 async def get_user_images(message: types.Message):
     user_id = str(message.chat.id)
     try:
-        os.mkdir('UserData/' + user_id)
+        os.mkdir(dir_path + '/UserData/' + user_id)
     except FileExistsError:
+        pass
+    except Exception as e:
+        print(e)
         pass
     destination = ('UserData/' + user_id + '/' + message.photo[2].file_unique_id + '.jpg')
     if await bot.download_file_by_id(message.photo[2].file_id, destination):
@@ -82,7 +85,7 @@ async def convert_to_pdf(query: types.CallbackQuery):
 
 def delete_user_data(user_id):
     try:
-        shutil.rmtree('UserData/' + user_id)
+        shutil.rmtree(dir_path + '/UserData/' + user_id)
     except (FileExistsError, FileNotFoundError):
         pass
 

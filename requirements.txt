@@ -6,3 +6,4 @@ apscheduler
 fpdf
 pillow
 dropbox
+TgCrypto

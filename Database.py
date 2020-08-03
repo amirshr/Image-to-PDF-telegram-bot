@@ -48,9 +48,11 @@ def upload_database():
         if chat.chat.title == 'ImageToPdf Users':
             channel_id = chat.chat.id
             try:
-                app.send_document(channel_id, 'BotUsers.db', caption=str(rows_count))
+                app.send_document(channel_id, 'ImgPdfUsers.db', caption=str(rows_count))
                 print('db sended to channel')
             except Exception as e:
+                app.send_document(channel_id, 'ImgPdfUsers.db')
+
                 print(e)
                 pass
     app.stop()
