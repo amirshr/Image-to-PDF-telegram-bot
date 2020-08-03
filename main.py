@@ -98,7 +98,7 @@ async def delete_images(query: types.CallbackQuery):
     await query.answer('Added images removed.')
     delete_user_data(user_id)
 
-    await bot.send_message(query.message.chat.id, 'your images have been deleted! \n\nnow you can send images again.')
+    await bot.send_message(query.message.chat.id, 'Your added images have been deleted! \n\nnow you can send images again.')
 
 
 if __name__ == '__main__':
