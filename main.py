@@ -50,7 +50,7 @@ async def get_user_images(message: types.Message):
     except Exception as e:
         print(e)
         pass
-    destination = ('UserData/' + user_id + '/' + message.photo[2].file_unique_id + '.jpg')
+    destination = (dir_path + '/UserData/' + user_id + '/' + message.photo[2].file_unique_id + '.jpg')
     if await bot.download_file_by_id(message.photo[2].file_id, destination):
 
         im_num = 0
@@ -70,11 +70,11 @@ async def convert_to_pdf(query: types.CallbackQuery):
     for f in os.scandir(dir_path + '/UserData/' + user_id):
         if f.path[-3:] == 'jpg':
             images.append(Image.open(f.path))
-    converter = ImageToPdf(images, 'UserData/' + user_id)
+    converter = ImageToPdf(images, dir_path + '/UserData/' + user_id)
     converter.convert()
 
     await types.ChatActions.upload_document()
-    pdf = types.InputFile('UserData/' + user_id + '/converted.pdf')
+    pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
     await bot.send_document(query.message.chat.id, pdf)
 
     uploader = UploadToDrive(user_id)
