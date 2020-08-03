@@ -30,7 +30,7 @@ async def show_main_list(message: types.Message):
 
 
 def get_convert_and_delete_keyboard():
-    images_keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
+    images_keyboard_markup = types.InlineKeyboardMarkup(row_width=1)
     text_and_data = (
         ('Convert to pdf', 'Convert to pdf'),
         ('Remove added images', 'Remove added images'))
