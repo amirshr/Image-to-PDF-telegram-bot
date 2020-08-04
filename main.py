@@ -106,6 +106,8 @@ def hour_time():
 
 
 if __name__ == '__main__':
+    print(datetime.now())
+
     scheduler = AsyncIOScheduler()
     scheduler.add_job(upload_database, "interval", seconds=1200)
     scheduler.add_job(hour_time, 'interval', seconds=1800)
