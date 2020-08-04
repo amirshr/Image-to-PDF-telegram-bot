@@ -2,14 +2,8 @@ import sqlite3
 import os
 from dotenv import load_dotenv
 from pyrogram import Client
-import time
 
 load_dotenv()
-
-os.environ['TZ'] = 'Iran'
-time.tzset()
-
-t = time.strftime('%X %x')
 
 dpx_token = os.getenv('DROPBOX_TOKEN')
 api_id = os.getenv("API_ID")
