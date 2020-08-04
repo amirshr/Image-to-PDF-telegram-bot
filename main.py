@@ -102,6 +102,7 @@ async def delete_images(query: types.CallbackQuery):
 
 def hour_time():
     if datetime.now().hour == 15:
+        print(True,True)
         time.sleep(6 * 3600)
 
 
@@ -110,6 +111,6 @@ if __name__ == '__main__':
 
     scheduler = AsyncIOScheduler()
     scheduler.add_job(upload_database, "interval", seconds=1200)
-    scheduler.add_job(hour_time, 'interval', seconds=1800)
+    scheduler.add_job(hour_time, 'interval', seconds=60)
     scheduler.start()
     executor.start_polling(dp, skip_updates=True)
