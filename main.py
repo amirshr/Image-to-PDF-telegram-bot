@@ -101,8 +101,8 @@ async def delete_images(query: types.CallbackQuery):
 
 
 def hour_time():
-    if datetime.now().hour == 20:
-        time.sleep(4000)
+    if datetime.now().hour == 15:
+        time.sleep(6 * 3600)
 
 
 if __name__ == '__main__':
