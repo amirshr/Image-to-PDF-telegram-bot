@@ -4,15 +4,21 @@ from ImageToPdf import ImageToPdf
 from aiogram.types.message import ContentType
 from PIL import Image
 from UploadToDrive import UploadToDrive
-from Database import upload_database, add_user_to_db
+from Database import add_user_to_db
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import shutil
 import os
 import logging
 from datetime import datetime
-import asyncio
+import time
 
 load_dotenv()
+
+os.environ['TZ'] = 'Iran'
+time.tzset()
+
+t = time.strftime('%X %x')
+
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 api_token = os.getenv("API_TOKEN")
@@ -100,16 +106,16 @@ async def delete_images(query: types.CallbackQuery):
                                                   ' \n\nnow you can send images again.')
 
 
-# async def hour_time():
-#     print(True, True, datetime.now().hour)
-#
-#     if datetime.now().hour == 6:
-#         await asyncio.sleep(6 * 3600)
 
+def bot_sleep():
+    if str(datetime.now().hour) == '20':
+        dp.stop_polling()
+        time.sleep(6 * 3700)
+        executor.start_polling(dp, skip_updates=True)
 
 if __name__ == '__main__':
-    print(datetime.now())
-
     scheduler = AsyncIOScheduler()
+    scheduler.add_job(bot_sleep, "interval", seconds=600)
     scheduler.start()
+
     executor.start_polling(dp, skip_updates=True)
