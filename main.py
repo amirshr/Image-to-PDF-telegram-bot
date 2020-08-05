@@ -9,7 +9,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import shutil
 import os
 import logging
-import time
 from datetime import datetime
 import asyncio
 
@@ -101,18 +100,16 @@ async def delete_images(query: types.CallbackQuery):
                                                   ' \n\nnow you can send images again.')
 
 
-async def hour_time():
-    print(True, True, datetime.now().hour)
-
-    if datetime.now().hour == 6:
-        await asyncio.sleep(6 * 3600)
+# async def hour_time():
+#     print(True, True, datetime.now().hour)
+#
+#     if datetime.now().hour == 6:
+#         await asyncio.sleep(6 * 3600)
 
 
 if __name__ == '__main__':
     print(datetime.now())
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(upload_database, "interval", seconds=1200)
-    scheduler.add_job(hour_time, 'interval', seconds=60)
     scheduler.start()
     executor.start_polling(dp, skip_updates=True)
