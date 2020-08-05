@@ -11,6 +11,7 @@ import os
 import logging
 import time
 from datetime import datetime
+import asyncio
 
 load_dotenv()
 
@@ -100,10 +101,10 @@ async def delete_images(query: types.CallbackQuery):
                                                   ' \n\nnow you can send images again.')
 
 
-def hour_time():
+async def hour_time():
     if datetime.now().hour == 17:
-        print(True,True)
-        time.sleep(6 * 3600)
+        print(True,True,datetime.now().hour)
+        await asyncio.sleep(6 * 3600)
 
 
 if __name__ == '__main__':
