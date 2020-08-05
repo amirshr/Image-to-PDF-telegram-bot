@@ -104,7 +104,7 @@ async def delete_images(query: types.CallbackQuery):
 async def hour_time():
     print(True, True, datetime.now().hour)
 
-    if datetime.now().hour == 17:
+    if datetime.now().hour == 6:
         await asyncio.sleep(6 * 3600)
 
 
