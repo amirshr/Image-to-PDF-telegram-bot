@@ -5,11 +5,10 @@ from aiogram.types.message import ContentType
 from PIL import Image
 from UploadToDrive import UploadToDrive
 from Database import add_user_to_db
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+# from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import shutil
 import os
 import logging
-from datetime import datetime
 import time
 
 load_dotenv()
@@ -106,16 +105,5 @@ async def delete_images(query: types.CallbackQuery):
                                                   ' \n\nnow you can send images again.')
 
 
-
-def bot_sleep():
-    if str(datetime.now().hour) == '20':
-        dp.stop_polling()
-        time.sleep(6 * 3700)
-        executor.start_polling(dp, skip_updates=True)
-
 if __name__ == '__main__':
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(bot_sleep, "interval", seconds=600)
-    scheduler.start()
-
     executor.start_polling(dp, skip_updates=True)
