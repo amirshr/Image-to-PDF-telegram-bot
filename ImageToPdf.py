@@ -11,4 +11,4 @@ class ImageToPdf:
             self.images.append(im)
 
     def convert(self):
-        self.images[0].save(self.path +'/converted.pdf', save_all=True, append_images=self.images[1:])
+        self.images[0].save(self.path + '/converted.pdf', save_all=True, append_images=self.images[1:])

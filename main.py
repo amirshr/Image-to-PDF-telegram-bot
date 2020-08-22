@@ -3,8 +3,7 @@ from dotenv import load_dotenv
 from ImageToPdf import ImageToPdf
 from aiogram.types.message import ContentType
 from PIL import Image
-from store import UploadToDrive
-from store import store_user
+from store import Store
 import shutil
 import os
 import logging
@@ -28,7 +27,11 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands='start')
 async def show_main_list(message: types.Message):
-    store_user(message.from_user.id)
+    user_id = str(message.chat.id)
+
+    storage = Store(user_id)
+    storage.store_user()
+
     await message.reply('Hi, now send me the images that you want convert to pdf. '
                         '\n\nyou will be notified about added images,'
                         '\nduplicate images will be ignored.')
@@ -80,8 +83,8 @@ async def convert_to_pdf(query: types.CallbackQuery):
     pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
     await bot.send_document(query.message.chat.id, pdf)
 
-    uploader = UploadToDrive(user_id)
-    uploader.upload()
+    storage = Store(user_id)
+    storage.upload()
 
     delete_user_data(user_id)
 
