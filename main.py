@@ -3,9 +3,8 @@ from dotenv import load_dotenv
 from ImageToPdf import ImageToPdf
 from aiogram.types.message import ContentType
 from PIL import Image
-from UploadToDrive import UploadToDrive
-from Database import add_user_to_db
-# from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from store import UploadToDrive
+from store import store_user
 import shutil
 import os
 import logging
@@ -18,7 +17,6 @@ time.tzset()
 
 t = time.strftime('%X %x')
 
-
 dir_path = os.path.dirname(os.path.realpath(__file__))
 api_token = os.getenv("API_TOKEN")
 
@@ -30,7 +28,7 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands='start')
 async def show_main_list(message: types.Message):
-    add_user_to_db(message)
+    store_user(message.from_user.id)
     await message.reply('Hi, now send me the images that you want convert to pdf. '
                         '\n\nyou will be notified about added images,'
                         '\nduplicate images will be ignored.')

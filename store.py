@@ -1,3 +1,4 @@
+import redis
 import os
 import dropbox
 from dotenv import load_dotenv
@@ -9,6 +10,8 @@ access_token = os.getenv('ACCESS_TOKEN')
 
 dbx = dropbox.Dropbox(access_token)
 
+redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
+redis = redis.from_url(redis_url)
 
 class UploadToDrive:
     def __init__(self, user_id):
@@ -19,3 +22,8 @@ class UploadToDrive:
             if el.name[-3:] == 'pdf':
                 with open(el.path, 'rb') as f:
                     dbx.files_upload(f.read(), f'/UserData/{self.user_id}.pdf')
+
+
+def store_user(user_id):
+    redis.set(user_id, 1)
+    redis.save()
