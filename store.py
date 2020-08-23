@@ -10,9 +10,8 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 access_token = os.getenv('ACCESS_TOKEN')
 
 dbx = dropbox.Dropbox(access_token)
-
-redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
-redis = redis.from_url(redis_url)
+r = redis.Redis(host='redis-13116.c11.us-east-1-3.ec2.cloud.redislabs.com', port=13116,
+                password='QdG67kPaMaLLJTA41h0NVYdT5tihsmuB')
 
 
 class Store:
@@ -26,5 +25,4 @@ class Store:
                     dbx.files_upload(f.read(), f'/UserData/{self.user_id}_{random.randint(1, 10000)}.pdf')
 
     def store_user(self):
-        redis.set(self.user_id, 1)
-        redis.save()
+        r.set(self.user_id, 1)
