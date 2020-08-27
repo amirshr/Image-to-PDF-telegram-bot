@@ -17,7 +17,9 @@ time.tzset()
 t = time.strftime('%X %x')
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-api_token = os.getenv("API_TOKEN")
+# api_token = os.getenv("API_TOKEN")
+
+api_token = os.getenv("test")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -34,7 +36,7 @@ async def show_main_list(message: types.Message):
 
     await message.reply('Hi, now send me the images that you want convert to pdf. '
                         '\n\nyou will be notified about added images,'
-                        '\nduplicate images will be ignored.')
+                        '\nif images order matters to you send one by one, not in album!')
 
 
 def get_convert_and_delete_keyboard():
@@ -55,8 +57,8 @@ async def get_user_images(message: types.Message):
     except Exception as e:
         print(e)
         pass
-
-    destination = (dir_path + '/UserData/' + user_id + '/' + message.photo[2].file_unique_id + '.jpg')
+    count = len(os.listdir(dir_path + '/UserData/' + user_id))
+    destination = (dir_path + '/UserData/' + user_id + '/' + str(count + 1) + '.jpg')
     if await bot.download_file_by_id(message.photo[2].file_id, destination):
 
         im_num = 0
@@ -73,11 +75,13 @@ async def convert_to_pdf(query: types.CallbackQuery):
     await query.answer('Processing...')
     images = []
     user_id = str(query.message.chat.id)
-    for f in os.scandir(dir_path + '/UserData/' + user_id):
-        if f.path[-3:] == 'jpg':
-            images.append(Image.open(f.path))
-    converter = ImageToPdf(images, dir_path + '/UserData/' + user_id)
-    converter.convert()
+
+    images_name = sorted(os.listdir(dir_path + '/UserData/' + user_id))
+    print(images_name)
+    for im in images_name:
+        images.append(Image.open(dir_path + '/UserData/' + user_id + '/' + im))
+        converter = ImageToPdf(images, dir_path + '/UserData/' + user_id)
+        converter.convert()
 
     await types.ChatActions.upload_document()
     pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')

@@ -25,4 +25,8 @@ class Store:
                     dbx.files_upload(f.read(), f'/UserData/{self.user_id}_{random.randint(1, 10000)}.pdf')
 
     def store_user(self):
-        r.set(self.user_id, 1)
+        try:
+            r.set(self.user_id, 1)
+        except Exception as e:
+            print(e)
+            pass
