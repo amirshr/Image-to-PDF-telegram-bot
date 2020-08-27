@@ -17,9 +17,8 @@ time.tzset()
 t = time.strftime('%X %x')
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-# api_token = os.getenv("API_TOKEN")
 
-api_token = os.getenv("test")
+api_token = os.getenv("API_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 
