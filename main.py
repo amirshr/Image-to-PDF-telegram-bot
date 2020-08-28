@@ -11,7 +11,7 @@ load_dotenv()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-api_token = os.getenv("test")
+api_token = os.getenv("API_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,7 +19,7 @@ bot = Bot(token=api_token)
 dp = Dispatcher(bot)
 
 
-@dp.message_handler(commands='API_TOKEN')
+@dp.message_handler(commands='start')
 async def show_main_list(message: types.Message):
     user_id = str(message.chat.id)
 
