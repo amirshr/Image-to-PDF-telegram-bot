@@ -18,6 +18,8 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=api_token)
 dp = Dispatcher(bot)
 
+photos_id = {}
+
 
 @dp.message_handler(commands='start')
 async def show_main_list(message: types.Message):
@@ -28,7 +30,7 @@ async def show_main_list(message: types.Message):
 
     await message.reply('Hi, now send me the images that you want convert to pdf. '
                         '\n\nyou will be notified about added images,'
-                        '\nif images order matters to you send them one by one, not in album!')
+                        '\nalbums are supported now! send images separately.')
 
 
 def get_convert_and_delete_keyboard():
@@ -43,25 +45,35 @@ def get_convert_and_delete_keyboard():
 
 @dp.message_handler(content_types=ContentType.PHOTO)
 async def get_user_images(message: types.Message):
-    user_id = str(message.chat.id)
-    try:
-        os.makedirs(dir_path + '/UserData/' + user_id)
-    except Exception as e:
-        print(e)
-        pass
-    count = len(os.listdir(dir_path + '/UserData/' + user_id))
-    destination = (dir_path + '/UserData/' + user_id + '/' + str(count + 1) + '.jpg')
-    await bot.download_file_by_id(message.photo[2].file_id, destination)
+    count = len(photos_id) + 1
+    photos_id[message.photo[2].file_id] = count
 
-    await message.reply(text=f'Your image added! \nnumber of added images: {count + 1}',
+    await message.reply(text=f'Your image added! \nnumber of added images: {count}',
                         reply_markup=get_convert_and_delete_keyboard())
+
+
+def delete_user_data(user_id):
+    photos_id.clear()
+    try:
+        shutil.rmtree(dir_path + '/UserData/' + user_id)
+    except (FileExistsError, FileNotFoundError):
+        pass
 
 
 @dp.callback_query_handler(text='Convert to pdf')
 async def convert_to_pdf(query: types.CallbackQuery):
     await query.answer('Processing...')
-    images = []
     user_id = str(query.message.chat.id)
+
+    try:
+        os.makedirs(dir_path + '/UserData/' + user_id)
+    except Exception as e:
+        print(e)
+        pass
+    for key, val in photos_id.items():
+        await bot.download_file_by_id(key, dir_path + '/UserData/' + user_id + '/' + str(val) + '.jpg')
+
+    images = []
 
     images_name = sorted([int(el[:-4]) for el in os.listdir(dir_path + '/UserData/' + user_id)])
 
@@ -71,7 +83,6 @@ async def convert_to_pdf(query: types.CallbackQuery):
     images[0].save(dir_path + '/UserData/' + user_id + '/converted.pdf',
                    save_all=True, append_images=images[1:])
 
-    await types.ChatActions.upload_document()
     pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
     await bot.send_document(query.message.chat.id, pdf)
 
@@ -81,17 +92,12 @@ async def convert_to_pdf(query: types.CallbackQuery):
     delete_user_data(user_id)
 
 
-def delete_user_data(user_id):
-    try:
-        shutil.rmtree(dir_path + '/UserData/' + user_id)
-    except (FileExistsError, FileNotFoundError):
-        pass
-
-
 @dp.callback_query_handler(text='Remove added images')
 async def delete_images(query: types.CallbackQuery):
     user_id = str(query.message.chat.id)
+
     await query.answer('Added images removed.')
+
     delete_user_data(user_id)
 
     await bot.send_message(query.message.chat.id, 'Your added images have been deleted!'

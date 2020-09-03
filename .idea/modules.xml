@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ImgToPdf.iml" filepath="$PROJECT_DIR$/.idea/ImgToPdf.iml" />
       <module fileurl="file://$PROJECT_DIR$/../TelRobotAll/.idea/TelRobotAll.iml" filepath="$PROJECT_DIR$/../TelRobotAll/.idea/TelRobotAll.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../TelRobotAll/test/.idea/test.iml" filepath="$PROJECT_DIR$/../TelRobotAll/test/.idea/test.iml" />
     </modules>
   </component>
 </project>
