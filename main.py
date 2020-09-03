@@ -30,7 +30,7 @@ async def show_main_list(message: types.Message):
 
     await message.reply('Hi, now send me the images that you want convert to pdf. '
                         '\n\nyou will be notified about added images,'
-                        '\nalbums are supported now! send images separately.')
+                        '\nalbums are supported now!')
 
 
 def get_convert_and_delete_keyboard():
