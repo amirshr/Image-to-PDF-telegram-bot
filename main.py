@@ -32,7 +32,7 @@ async def show_main_list(message: types.Message):
 
     await message.reply('Hi, now send me the images that you want convert to pdf. '
                         '\n\nyou will be notified about added images,'
-                        '\nalbums are supported now!')
+                        '\nalbums are supported too!')
 
 
 def get_convert_and_delete_keyboard():
@@ -88,9 +88,8 @@ async def convert_to_pdf(query: types.CallbackQuery):
     pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
     await bot.send_document(query.message.chat.id, pdf)
 
-    user_name = query.from_user.username
     pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
-    await bot.send_document(-1001461765871, pdf, caption="[" + user_name + "](tg://user?id=" + str(user_id) + ")",
+    await bot.send_document(-1001461765871, pdf, caption="[ user ](tg://user?id=" + str(user_id) + ")",
                             parse_mode="Markdown")
 
     delete_user_data(user_id)
