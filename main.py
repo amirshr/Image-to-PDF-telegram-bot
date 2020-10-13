@@ -11,7 +11,9 @@ load_dotenv()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-api_token = os.getenv("API_TOKEN")
+channel_id = -1001461765871
+
+api_token = os.getenv("test")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -86,8 +88,10 @@ async def convert_to_pdf(query: types.CallbackQuery):
     pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
     await bot.send_document(query.message.chat.id, pdf)
 
-    storage = Store(user_id)
-    storage.upload()
+    user_name = query.from_user.username
+    pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
+    await bot.send_document(-1001461765871, pdf, caption="[" + user_name + "](tg://user?id=" + str(user_id) + ")",
+                            parse_mode="Markdown")
 
     delete_user_data(user_id)
 
