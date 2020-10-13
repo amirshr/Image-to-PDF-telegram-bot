@@ -13,7 +13,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 channel_id = -1001461765871
 
-api_token = os.getenv("test")
+api_token = os.getenv("API_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 
