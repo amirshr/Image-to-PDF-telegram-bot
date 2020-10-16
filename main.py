@@ -21,7 +21,6 @@ bot = Bot(token=api_token)
 dp = Dispatcher(bot)
 
 photos_id = {}
-photos_test = {}
 
 
 @dp.message_handler(commands='API_TOKEN')
