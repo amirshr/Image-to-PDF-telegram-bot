@@ -13,7 +13,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 channel_id = -1001461765871
 
-api_token = os.getenv("API_TOKEN")
+api_token = os.getenv("test")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,9 +21,10 @@ bot = Bot(token=api_token)
 dp = Dispatcher(bot)
 
 photos_id = {}
+photos_test = {}
 
 
-@dp.message_handler(commands='start')
+@dp.message_handler(commands='API_TOKEN')
 async def show_main_list(message: types.Message):
     user_id = str(message.chat.id)
 
@@ -47,15 +48,29 @@ def get_convert_and_delete_keyboard():
 
 @dp.message_handler(content_types=ContentType.PHOTO)
 async def get_user_images(message: types.Message):
-    count = len(photos_id) + 1
-    photos_id[message.photo[2].file_id] = count
+    user_id = str(message.chat.id)
+    count = 1
+
+    for key, val in photos_id.items():
+        if list(val.keys())[0] == user_id:
+            count += 1
+
+    photos_id[message.photo[2].file_id] = {user_id: count}
 
     await message.reply(text=f'Your image added! \nnumber of added images: {count}',
                         reply_markup=get_convert_and_delete_keyboard())
 
 
 def delete_user_data(user_id):
-    photos_id.clear()
+    user_photos_to_remove = []
+
+    for key, val in photos_id.items():
+        if list(val.keys())[0] == user_id:
+            user_photos_to_remove.append(key)
+
+    for el in user_photos_to_remove:
+        del photos_id[el]
+
     try:
         shutil.rmtree(dir_path + '/UserData/' + user_id)
     except (FileExistsError, FileNotFoundError):
@@ -72,8 +87,11 @@ async def convert_to_pdf(query: types.CallbackQuery):
     except Exception as e:
         print(e)
         pass
+    photos_id.keys()
     for key, val in photos_id.items():
-        await bot.download_file_by_id(key, dir_path + '/UserData/' + user_id + '/' + str(val) + '.jpg')
+
+        if list(val.keys())[0] == user_id:
+            await bot.download_file_by_id(key, dir_path + '/UserData/' + user_id + '/' + str(val[user_id]) + '.jpg')
 
     images = []
 
