@@ -13,7 +13,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 channel_id = -1001461765871
 
-api_token = os.getenv("test")
+api_token = os.getenv("API_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,7 +23,7 @@ dp = Dispatcher(bot)
 photos_id = {}
 
 
-@dp.message_handler(commands='API_TOKEN')
+@dp.message_handler(commands='start')
 async def show_main_list(message: types.Message):
     user_id = str(message.chat.id)
 
