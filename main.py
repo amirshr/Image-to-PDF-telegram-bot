@@ -22,6 +22,7 @@ bot = Bot(token=api_token)
 dp = Dispatcher(bot)
 
 photos_id = {}
+pdf_names = {}
 
 
 @dp.message_handler(commands='start')
@@ -41,6 +42,16 @@ def get_convert_and_delete_keyboard():
     text_and_data = (
         ('Convert to pdf', 'Convert to pdf'),
         ('Remove added images', 'Remove added images'))
+    row_btns = (types.InlineKeyboardButton(text, callback_data=data) for text, data in text_and_data)
+    images_keyboard_markup.add(*row_btns)
+    return images_keyboard_markup
+
+
+def get_rename_pdf_keyboard():
+    images_keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
+    text_and_data = (
+        ('Yes!', 'yes'),
+        ('No!', 'no'))
     row_btns = (types.InlineKeyboardButton(text, callback_data=data) for text, data in text_and_data)
     images_keyboard_markup.add(*row_btns)
     return images_keyboard_markup
@@ -81,17 +92,89 @@ def delete_user_data(user_id):
     except (FileExistsError, FileNotFoundError):
         pass
 
+    try:
+        pdf_names.pop(user_id)
+    except KeyError:
+        pass
+
 
 @dp.callback_query_handler(text='Convert to pdf')
 async def convert_to_pdf(query: types.CallbackQuery):
+    await query.answer('')
+    await bot.send_message(query.message.chat.id, 'Do you want to set pdf name?',
+                           reply_markup=get_rename_pdf_keyboard())
+
+
+@dp.callback_query_handler(text='yes')
+async def send_pdf_name(query: types.CallbackQuery):
+    await bot.edit_message_text(chat_id=query.message.chat.id, text='Send you\'r prefer name:',
+                                message_id=query.message.message_id)
+    await query.answer('')
+
+
+@dp.message_handler()
+async def set_pdf_name(message: types.Message):
+    user_id = str(message.chat.id)
+    pdf_names[user_id] = message.text
+
+    try:
+        pdf_path = f'{dir_path}/UserData/{user_id}/{pdf_names[user_id]}.pdf'
+        await image_to_pdf(user_id, pdf_path)
+
+    except KeyError:
+        print(KeyError)
+        pdf_path = f'{dir_path}/UserData/{user_id}/converted.pdf'
+        await image_to_pdf(user_id, pdf_path)
+
+    except IndexError:
+        await bot.send_message(message.chat.id, 'Please send you\'r images...')
+        return
+
+    pdf = types.InputFile(pdf_path)
+    await bot.send_document(user_id, pdf)
+
+    pdf = types.InputFile(pdf_path)
+    await bot.send_document(-1001461765871, pdf, caption="[ user ](tg://user?id=" + str(user_id) + ")",
+                            parse_mode="Markdown")
+
+    delete_user_data(user_id)
+
+
+@dp.callback_query_handler(text='no')
+async def convert_to_pdf(query: types.CallbackQuery):
     await query.answer('Processing...')
+    await bot.edit_message_text(chat_id=query.message.chat.id, text='Processing...',
+                                message_id=query.message.message_id)
     user_id = str(query.message.chat.id)
 
     try:
+        pdf_path = f'{dir_path}/UserData/{user_id}/{pdf_names[user_id]}.pdf'
+        await image_to_pdf(user_id, pdf_path)
+
+    except KeyError:
+        pdf_path = f'{dir_path}/UserData/{user_id}/converted.pdf'
+        await image_to_pdf(user_id, pdf_path)
+
+    except IndexError:
+        await bot.send_message(query.message.chat.id, 'Please send you\'r images...')
+        return
+
+    pdf = types.InputFile(pdf_path)
+    await bot.send_document(user_id, pdf)
+
+    pdf = types.InputFile(pdf_path)
+    await bot.send_document(-1001461765871, pdf, caption="[ user ](tg://user?id=" + str(user_id) + ")",
+                            parse_mode="Markdown")
+
+    delete_user_data(user_id)
+
+
+async def image_to_pdf(user_id, pdf_path):
+    try:
         os.makedirs(dir_path + '/UserData/' + user_id)
-    except Exception as e:
-        print(e)
+    except FileExistsError:
         pass
+
     photos_id.keys()
     for key, val in photos_id.items():
 
@@ -105,17 +188,9 @@ async def convert_to_pdf(query: types.CallbackQuery):
     for im in images_name:
         images.append(Image.open(dir_path + '/UserData/' + user_id + '/' + str(im) + '.jpg'))
 
-    images[0].save(dir_path + '/UserData/' + user_id + '/converted.pdf',
+    images[0].save(pdf_path,
                    save_all=True, append_images=images[1:])
-
-    pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
-    await bot.send_document(query.message.chat.id, pdf)
-
-    pdf = types.InputFile(dir_path + '/UserData/' + user_id + '/converted.pdf')
-    await bot.send_document(-1001461765871, pdf, caption="[ user ](tg://user?id=" + str(user_id) + ")",
-                            parse_mode="Markdown")
-
-    delete_user_data(user_id)
+    return True
 
 
 @dp.callback_query_handler(text='Remove added images')
