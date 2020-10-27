@@ -14,7 +14,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 channel_id = -1001461765871
 
 api_token = os.getenv("API_TOKEN")
-# api_token = os.getenv("test")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -65,13 +64,8 @@ async def get_user_images(message: types.Message):
     for key, val in photos_id.items():
         if list(val.keys())[0] == user_id:
             count += 1
-    try:
-        photos_id[message.photo[2].file_id] = {user_id: count}
-    except IndexError:
-        try:
-            photos_id[message.photo[1].file_id] = {user_id: count}
-        except IndexError:
-            photos_id[message.photo[0].file_id] = {user_id: count}
+
+    photos_id[message.photo[2].file_id] = {user_id: count}
 
     await message.reply(text=f'Your image added! \nnumber of added images: {count}',
                         reply_markup=get_convert_and_delete_keyboard())
