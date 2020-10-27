@@ -35,7 +35,7 @@ async def show_main_list(message: types.Message):
     await message.reply('Hi, now send me the images that you want convert to PDF. '
                         '\n\nyou will be notified about added images,'
                         '\n\nif you need high quality PDF send images as file!'
-                        '\n\nreport issues to the developer contact, Thanks!')
+                        '\n\nreport issues to the developer contact(@ImgDeveloperContactBot), Thanks!')
 
 
 def get_convert_and_delete_keyboard():
