@@ -172,8 +172,13 @@ async def convert_to_pdf(query: types.CallbackQuery):
         await image_to_pdf(user_id, pdf_path)
 
     except KeyError:
-        pdf_path = f'{dir_path}/UserData/{user_id}/converted.pdf'
-        await image_to_pdf(user_id, pdf_path)
+        try:
+            pdf_path = f'{dir_path}/UserData/{user_id}/converted.pdf'
+            await image_to_pdf(user_id, pdf_path)
+
+        except IndexError:
+            await bot.send_message(query.message.chat.id, 'Please send you\'r images...')
+            return
 
     except IndexError:
         await bot.send_message(query.message.chat.id, 'Please send you\'r images...')
