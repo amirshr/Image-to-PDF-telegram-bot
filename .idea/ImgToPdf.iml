@@ -4,9 +4,6 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="TelRobotAll" />
     <orderEntry type="module" module-name="test" />
-    <orderEntry type="module" module-name="nbot" />
-    <orderEntry type="module" module-name="nahad" />
   </component>
 </module>

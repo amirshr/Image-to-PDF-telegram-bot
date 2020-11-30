@@ -13,8 +13,9 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 channel_id = -1001461765871
 
-api_token = os.getenv("API_TOKEN")
-# api_token = os.getenv("test")
+# api_token = os.getenv("API_TOKEN")
+api_token = os.getenv("test")
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -34,8 +35,7 @@ async def show_main_list(message: types.Message):
 
     await message.reply('Hi, now send me the images that you want convert to PDF. '
                         '\n\nyou will be notified about added images,'
-                        '\n\nif you need high quality PDF send images as file!'
-                        '\n\nreport issues to the developer contact(@ImgDeveloperContactBot), Thanks!')
+                        '\n\nif you need high quality PDF send images as file!')
 
 
 def get_convert_and_delete_keyboard():
@@ -177,11 +177,11 @@ async def convert_to_pdf(query: types.CallbackQuery):
             await image_to_pdf(user_id, pdf_path)
 
         except IndexError:
-            await bot.send_message(query.message.chat.id, 'Please send you\'r images...')
+            await bot.send_message(query.message.chat.id, 'Please send you\'r images first...')
             return
 
     except IndexError:
-        await bot.send_message(query.message.chat.id, 'Please send you\'r images...')
+        await bot.send_message(query.message.chat.id, 'Please send you\'r images first...')
         return
 
     pdf = types.InputFile(pdf_path)
