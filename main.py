@@ -25,6 +25,15 @@ dp = Dispatcher(bot)
 photos_id = {}
 pdf_names = {}
 
+sponsor_channel_id = -1001406006366
+
+
+async def is_channel_member(user_id):
+    member = await bot.get_chat_member(sponsor_channel_id, user_id)
+    if member.status == 'member' or member.status == 'administrator' or member.status == 'creator':
+        return True
+    return False
+
 
 @dp.message_handler(commands='start')
 async def show_main_list(message: types.Message):
@@ -33,9 +42,14 @@ async def show_main_list(message: types.Message):
     storage = Store(user_id)
     storage.store_user()
 
+    keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
+    keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/joinchat/U830Xttt4mTKNFqC'))
+
     await message.reply('Hi, now send me the images that you want convert to PDF. '
                         '\n\nyou will be notified about added images,'
-                        '\n\nif you need high quality PDF send images as file!')
+                        '\n\nif you need high quality PDF send images as file!'
+                        '\n\nthis bot is totally free but you need to join the below channel to use it.',
+                        reply_markup=keyboard_markup)
 
 
 def get_convert_and_delete_keyboard():
@@ -62,39 +76,52 @@ def get_rename_pdf_keyboard():
 async def get_user_images_hq(message: types.Message):
     if message.document.mime_type.split('/')[0] == 'image':
         user_id = str(message.chat.id)
-        count = 1
 
-        for key, val in photos_id.items():
-            if list(val.keys())[0] == user_id:
-                count += 1
-        try:
-            photos_id[message.document.file_id] = {user_id: count}
-        except Exception as e:
-            print(e)
-            pass
+        if not await is_channel_member(user_id):
+            keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
+            keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/joinchat/U830Xttt4mTKNFqC'))
 
-        await message.reply(text=f'Your image added! \nnumber of added images: {count}',
-                            reply_markup=get_convert_and_delete_keyboard())
+            return await message.reply(text='please join below channel first.', reply_markup=keyboard_markup)
+
+        else:
+            count = 1
+
+            for key, val in photos_id.items():
+                if list(val.keys())[0] == user_id:
+                    count += 1
+            try:
+                photos_id[message.document.file_id] = {user_id: count}
+            except Exception as e:
+                print(e)
+                pass
+
+            await message.reply(text=f'Your image added! \nnumber of added images: {count}',
+                                reply_markup=get_convert_and_delete_keyboard())
 
 
 @dp.message_handler(content_types=ContentType.PHOTO)
 async def get_user_images(message: types.Message):
     user_id = str(message.chat.id)
     count = 1
+    if not await is_channel_member(user_id):
+        keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
+        keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/joinchat/U830Xttt4mTKNFqC'))
 
-    for key, val in photos_id.items():
-        if list(val.keys())[0] == user_id:
-            count += 1
-    try:
-        photos_id[message.photo[2].file_id] = {user_id: count}
-    except IndexError:
+        return await message.reply(text='please join below channel first.', reply_markup=keyboard_markup)
+    else:
+        for key, val in photos_id.items():
+            if list(val.keys())[0] == user_id:
+                count += 1
         try:
-            photos_id[message.photo[1].file_id] = {user_id: count}
+            photos_id[message.photo[2].file_id] = {user_id: count}
         except IndexError:
-            photos_id[message.photo[0].file_id] = {user_id: count}
+            try:
+                photos_id[message.photo[1].file_id] = {user_id: count}
+            except IndexError:
+                photos_id[message.photo[0].file_id] = {user_id: count}
 
-    await message.reply(text=f'Your image added! \nnumber of added images: {count}',
-                        reply_markup=get_convert_and_delete_keyboard())
+        await message.reply(text=f'Your image added! \nnumber of added images: {count}',
+                            reply_markup=get_convert_and_delete_keyboard())
 
 
 def delete_user_data(user_id):
