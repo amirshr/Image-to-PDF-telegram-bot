@@ -1,21 +1,15 @@
 from aiogram import Bot, Dispatcher, types, executor
-from dotenv import load_dotenv
 from aiogram.types.message import ContentType
 from PIL import Image
-from store import Store
 import shutil
 import os
 import logging
 
-load_dotenv()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-channel_id = -1001461765871
 
-api_token = os.getenv("API_TOKEN")
-# api_token = os.getenv("test")
-
+api_token = '1330374959:AAGyL6LPKftt3tmRzeN3LoipvJAVuLl9Awk'
 
 logging.basicConfig(level=logging.INFO)
 
@@ -39,11 +33,11 @@ async def is_channel_member(user_id):
 async def show_main_list(message: types.Message):
     user_id = str(message.chat.id)
 
-    storage = Store(user_id)
-    storage.store_user()
+    # storage = Store(user_id)
+    # storage.store_user()
 
     keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
-    keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/joinchat/U830Xttt4mTKNFqC'))
+    keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/+o6jiTbo6ixk5MTY5'))
 
     await message.reply('Hi, now send me the images that you want convert to PDF. '
                         '\n\nyou will be notified about added images,'
@@ -79,7 +73,7 @@ async def get_user_images_hq(message: types.Message):
 
         if not await is_channel_member(user_id):
             keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
-            keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/joinchat/U830Xttt4mTKNFqC'))
+            keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/+o6jiTbo6ixk5MTY5'))
 
             return await message.reply(text='please join below channel first.', reply_markup=keyboard_markup)
 
@@ -105,7 +99,7 @@ async def get_user_images(message: types.Message):
     count = 1
     if not await is_channel_member(user_id):
         keyboard_markup = types.InlineKeyboardMarkup(row_width=2)
-        keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/joinchat/U830Xttt4mTKNFqC'))
+        keyboard_markup.add(types.InlineKeyboardButton('Join!', 'https://t.me/+o6jiTbo6ixk5MTY5'))
 
         return await message.reply(text='please join below channel first.', reply_markup=keyboard_markup)
     else:
@@ -154,7 +148,7 @@ async def convert_to_pdf(query: types.CallbackQuery):
 
 @dp.callback_query_handler(text='yes')
 async def send_pdf_name(query: types.CallbackQuery):
-    await bot.edit_message_text(chat_id=query.message.chat.id, text='Send you\'r prefer name:',
+    await bot.edit_message_text(chat_id=query.message.chat.id, text='Send you\'r prefer name as english words:',
                                 message_id=query.message.message_id)
     await query.answer('')
 
@@ -179,10 +173,6 @@ async def set_pdf_name(message: types.Message):
 
     pdf = types.InputFile(pdf_path)
     await bot.send_document(user_id, pdf)
-
-    pdf = types.InputFile(pdf_path)
-    await bot.send_document(-1001461765871, pdf, caption="[ user ](tg://user?id=" + str(user_id) + ")",
-                            parse_mode="Markdown")
 
     delete_user_data(user_id)
 
@@ -213,10 +203,6 @@ async def convert_to_pdf(query: types.CallbackQuery):
 
     pdf = types.InputFile(pdf_path)
     await bot.send_document(user_id, pdf)
-
-    pdf = types.InputFile(pdf_path)
-    await bot.send_document(-1001461765871, pdf, caption="[ user ](tg://user?id=" + str(user_id) + ")",
-                            parse_mode="Markdown")
 
     delete_user_data(user_id)
 
